@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function Form() {
-  const [range, setRange] = useState('');
-  const [data, setData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    faculty: '',
-    department: '',
-    matricNumber: '',
-    agree: false,
-  });
+  const [show, setShow] = useState(false);
+  const [range, setRange] = useState(
+    JSON.parse(localStorage.getItem('range')) || ''
+  );
+  const [data, setData] = useState(
+    JSON.parse(localStorage.getItem('details')) || {
+      firstName: '',
+      lastName: '',
+      email: '',
+      faculty: '',
+      department: '',
+      matricNumber: '',
+      agree: false,
+    }
+  );
 
   function handleChange(e) {
     const { value, type, name, checked } = e.target;
@@ -22,22 +27,28 @@ export default function Form() {
     });
   }
 
+  useEffect(() => {
+    localStorage.setItem('details', JSON.stringify(data));
+    localStorage.setItem('range', JSON.stringify(range));
+  }, [data, range]);
+
   function handle(e) {
     setRange(e.target.value);
   }
 
   function onSubmit(e) {
     e.preventDefault();
-    setData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      faculty: '',
-      department: '',
-      matricNumber: '',
-      agree: false,
-    });
-    setRange('');
+    setShow(true);
+    // setData({
+    //   firstName: '',
+    //   lastName: '',
+    //   email: '',
+    //   faculty: '',
+    //   department: '',
+    //   matricNumber: '',
+    //   agree: false,
+    // });
+    // setRange('');
   }
 
   let grade = '';
@@ -225,6 +236,16 @@ export default function Form() {
           </button>
         </div>
       </form>
+      <div>
+        {show ? (
+          <>
+            {localStorage.getItem('details')}
+            {localStorage.getItem('range')}
+          </>
+        ) : (
+          ''
+        )}
+      </div>
     </div>
   );
 }
