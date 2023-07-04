@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { departmental, faculties, matric, percent } from './Data';
 
 export default function Form() {
   const [show, setShow] = useState(false);
-  const [range, setRange] = useState(
-    JSON.parse(localStorage.getItem('range')) || ''
-  );
   const [data, setData] = useState(
     JSON.parse(localStorage.getItem('details')) || {
       firstName: '',
@@ -16,6 +14,9 @@ export default function Form() {
       agree: false,
     }
   );
+
+  let ranges = percent[data.matricNumber];
+  ranges = JSON.stringify(localStorage.getItem('range')) || '';
 
   function handleChange(e) {
     const { value, type, name, checked } = e.target;
@@ -29,84 +30,91 @@ export default function Form() {
 
   useEffect(() => {
     localStorage.setItem('details', JSON.stringify(data));
-    localStorage.setItem('range', JSON.stringify(range));
-  }, [data, range]);
-
-  function handle(e) {
-    setRange(e.target.value);
-  }
+    localStorage.setItem(
+      'range',
+      JSON.stringify(`${percent[data.matricNumber]}`)
+    );
+  }, [data, ranges]);
 
   function onSubmit(e) {
     e.preventDefault();
     setShow(true);
-    // setData({
-    //   firstName: '',
-    //   lastName: '',
-    //   email: '',
-    //   faculty: '',
-    //   department: '',
-    //   matricNumber: '',
-    //   agree: false,
-    // });
-    // setRange('');
+    setData({
+      firstName: '',
+      lastName: '',
+      email: '',
+      faculty: '',
+      department: '',
+      matricNumber: '',
+      agree: false,
+    });
   }
 
+  let range = percent[data.matricNumber];
+  let backgrnd = '';
   let grade = '';
   if (range > 1 && range <= 30) {
-    grade = <span className="text-danger">Fail</span>;
+    grade = <span style={{ color: 'red' }}>Probation</span>;
+    backgrnd = 'red';
   } else if (range > 30 && range <= 45) {
-    grade = <span className="text-warning">Pass</span>;
+    grade = <span style={{ color: 'skyblue' }}>Pass</span>;
+    backgrnd = 'skyblue';
   } else if (range > 45 && range <= 55) {
-    grade = <span className="text-secondary">Lower</span>;
+    grade = <span style={{ color: 'black' }}>Lower class</span>;
+    backgrnd = 'black';
   } else if (range > 55 && range <= 70) {
-    grade = <span className="text-primary">Upper</span>;
+    grade = <span style={{ color: 'blueviolet' }}>Upper</span>;
+    backgrnd = 'blueviolet';
   } else if (range > 70 && range <= 85) {
-    grade = <span className="text-success">First class Upper</span>;
+    grade = <span style={{ color: 'darkgreen' }}>First class upper</span>;
+    backgrnd = 'darkgreen';
   } else if (range > 85) {
     grade = <span style={{ color: 'navy' }}>Distinction</span>;
+    backgrnd = 'navy';
   }
 
   return (
-    <div className="container mt-4 mb-4">
-      <h1>Check result</h1>
-      <form className="row g-3 needs-validation" noValidate onSubmit={onSubmit}>
-        <div className="col-md-4">
-          <label htmlFor="validationCustom01" className="form-label">
-            First name
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="validationCustom01"
-            onChange={handleChange}
-            name="firstName"
-            value={data.firstName}
-            required
-          />
-          <div className="valid-feedback">Looks good!</div>
+    <div className="container-fluid py-2 bg-success text-light">
+      <h1 className="text-center">Check result</h1>
+      <form className="row g-4 needs-validation px-3" onSubmit={onSubmit}>
+        <div className="col-md-6">
+          <div className="input-group">
+            <span id="validationCustom01" className="input-group-text">
+              First name
+            </span>
+            <input
+              type="text"
+              className="form-control"
+              aria-describedby="validationCustom01"
+              onChange={handleChange}
+              name="firstName"
+              value={data.firstName}
+              required
+            />
+            <div className="valid-feedback">Looks good!</div>
+          </div>
         </div>
-        <div className="col-md-4">
-          <label htmlFor="validationCustom02" className="form-label">
-            Last name
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="validationCustom02"
-            onChange={handleChange}
-            name="lastName"
-            value={data.lastName}
-            required
-          />
-          <div className="valid-feedback">Looks good!</div>
+        <div className="col-md-6">
+          <div className="input-group">
+            <span id="validationCustom02" className="input-group-text">
+              Last name
+            </span>
+            <input
+              type="text"
+              className="form-control"
+              aria-describedby="validationCustom02"
+              onChange={handleChange}
+              name="lastName"
+              value={data.lastName}
+              required
+            />
+            <div className="valid-feedback">Looks good!</div>
+          </div>
         </div>
-        <div className="col-md-4">
-          <label htmlFor="validationCustomEmail" className="form-label">
-            Email address
-          </label>
+        <div className="col-md-6">
           <div className="input-group has-validation">
             <span className="input-group-text" id="inputGroupPrepend">
-              @
+              Email @
             </span>
             <input
               type="text"
@@ -114,100 +122,124 @@ export default function Form() {
               name="email"
               value={data.email}
               className="form-control"
-              id="validationCustomEmail"
               aria-describedby="inputGroupPrepend"
               required
             />
             <div className="invalid-feedback">Please choose a email.</div>
           </div>
         </div>
-        <div className="col-md-4">
-          <label htmlFor="validationCustom04" className="form-label">
-            Faculty
-          </label>
-          <select
-            className="form-select"
-            name="faculty"
-            onChange={handleChange}
-            id="validationCustom04"
-            required
-            defaultValue
-          >
-            <option value="">Choose...</option>
-            <option value="Eniromental study">Eniromental study</option>
-            <option value="Applied science">Applied science</option>
-          </select>
-          <div className="invalid-feedback">Please select a valid faculty.</div>
-        </div>
-        <div className="col-md-4">
-          <label htmlFor="validationCustom03" className="form-label">
-            Department
-          </label>
-          <select
-            className="form-select"
-            name="department"
-            onChange={handleChange}
-            id="validationCustom03"
-            required
-            defaultValue
-          >
-            <option value="">Choose...</option>
-            <option value="Building technology">Building technology</option>
-            <option value="Computer science">Computer science</option>
-          </select>
-          <div className="invalid-feedback">
-            Please select a valid department.
+        <div className="col-md-6">
+          <div className="input-group">
+            <span id="validationCustom04" className="input-group-text">
+              Faculty
+            </span>
+            <select
+              className="form-select"
+              name="faculty"
+              onChange={handleChange}
+              aria-describedby="validationCustom04"
+              required
+              defaultValue
+            >
+              <option className="text-center">--- Choose ---</option>
+              {faculties.map((faculty, index) => (
+                <option className="text-center" key={index} value={faculty}>
+                  {faculty}
+                </option>
+              ))}
+            </select>
+            <div className="invalid-feedback">
+              Please select a valid faculty.
+            </div>
           </div>
         </div>
-        <div className="col-md-4">
-          <label htmlFor="validationCustom05" className="form-label">
-            Matric / App Number
-          </label>
-          <input
-            type="text"
-            onChange={handleChange}
-            name="matricNumber"
-            value={data.matricNumber}
-            className="form-control"
-            id="validationCustom05"
-            required
-          />
-          <div className="invalid-feedback">
-            Please provide a valid matric / app number.
+        <div className="col-md-6">
+          <div className="input-group">
+            <span id="validationCustom03" className="input-group-text">
+              Department
+            </span>
+            <select
+              className="form-select"
+              name="department"
+              onChange={handleChange}
+              aria-describedby="validationCustom03"
+              required
+              defaultValue
+            >
+              <option className="text-center" value="">
+                --- Choose ---
+              </option>
+              {data.faculty &&
+                departmental[data.faculty].map((department, index) => (
+                  <option
+                    className="text-center"
+                    key={index}
+                    value={department}
+                  >
+                    {department}
+                  </option>
+                ))}
+            </select>
+            <div className="invalid-feedback">
+              Please select a valid department.
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6">
+          <div className="input-group">
+            <span id="validationCustom05" className="input-group-text">
+              Matric
+            </span>
+            <select
+              className="form-select"
+              name="matricNumber"
+              onChange={handleChange}
+              aria-describedby="validationCustom05"
+              required
+              defaultValue
+            >
+              <option className="text-center" value="">
+                --- Choose ---
+              </option>
+              {data.department &&
+                matric[data.department].map((matric, index) => (
+                  <option className="text-center" key={index} value={matric}>
+                    {matric}
+                  </option>
+                ))}
+            </select>
+            <div className="invalid-feedback">
+              Please select a valid Matric / App Number.
+            </div>
           </div>
         </div>
 
-        <input
-          style={{
-            marginTop: '1rem',
-            borderRadius: '0.3rem',
-            padding: '5px 7px',
-            border: '2px solid black',
-            fontSize: '19px',
-            fontWeight: 'bold',
-            width: '4rem',
-            textAlign: 'center',
-          }}
-          type="text"
-          placeholder="0%"
-          value={range}
-          onChange={handle}
-        />
-
-        <h4>Your range is: {range > '0%' ? `${range}%` : '0%'}</h4>
-        <h5>Your GPA: {range < '' ? '' : grade}</h5>
+        <h4>
+          Your score is:{' '}
+          {percent[data.matricNumber] > '0'
+            ? `${percent[data.matricNumber]}`
+            : '0'}
+        </h4>
+        <h5>Your GPA: {percent[data.matricNumber] < 0 ? '' : grade}</h5>
         <div className="container">
           <div className="progress">
             <div
               className="progress-bar "
               style={{
-                width: `${range === '' ? 0 : range}%`,
+                backgroundColor: backgrnd,
+                width: `${
+                  percent[data.matricNumber] === undefined
+                    ? '0'
+                    : percent[data.matricNumber]
+                }%`,
                 fontWeight: 'bold',
                 fontSize: '15px',
                 letterSpacing: '1px',
               }}
             >
-              {range === '' ? '' : `${range}%`}
+              {percent[data.matricNumber] === ''
+                ? ''
+                : `${percent[data.matricNumber]}%`}
             </div>
           </div>
         </div>
@@ -226,24 +258,23 @@ export default function Form() {
               I agree that this is my result
             </label>
             <div className="invalid-feedback">
-              You must agree before printting.
+              You must agree before printing.
             </div>
           </div>
         </div>
         <div className="col-12">
-          <button className="btn btn-outline-success" type="submit">
+          <button className="btn btn-outline-light" type="submit">
             Print result
           </button>
         </div>
       </form>
-      <div>
-        {show ? (
+
+      <div className="container text-center my-3">
+        {show && (
           <>
             {localStorage.getItem('details')}
-            {localStorage.getItem('range')}
+            <h3>Your Point: {localStorage.getItem('range')}</h3>
           </>
-        ) : (
-          ''
         )}
       </div>
     </div>
