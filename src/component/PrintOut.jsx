@@ -15,18 +15,20 @@ export default function PrintOut() {
   }
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
+    <div className="d-flex justify-content-center align-items-center vw-100 vh-100">
       <div className="row p-5">
         {details.map((details) => (
           <div
             key={details.id}
             className="col text-start"
-            style={{ width: '450px' }}
+            style={{ width: '400px' }}
           >
             <div className="card text-light bg-success border-3">
-              <div className="d-flex align-items-center card-header border-light">
-                <img src={user} className="me-3" width="10%" alt={user} />
-                <h5>{details.firstName} result details</h5>
+              <div className="card-header border-light">
+                <img src={user} className="me-2" width="10%" alt={user} />
+                <span>
+                  {details.lastName} {details.middleName} {details.firstName}
+                </span>
               </div>
               <div className="card-body">
                 <div>
